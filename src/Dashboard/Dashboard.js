@@ -10,7 +10,10 @@ import { v4 as uuidv4 } from "uuid";
 const Dashboard = ({ token }) => {
   const [message, setMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  // const [editingUser, setEditingUser] = useState(null);
   const [user, setUser] = useState({
+    key:"",
     firstName: "",
     lastName: "",
     email: "",
@@ -34,8 +37,11 @@ const Dashboard = ({ token }) => {
           }
         );
         setMessage(response.data.message);
-        console.log(response.data);
-        setDataSource(response.data)
+        const dataWithKeys = response.data.map((user) => ({
+          ...user,
+          key: user._id || uuidv4(), // Use a unique identifier from the backend or generate a new one
+        }));
+        setDataSource(dataWithKeys);
       } catch (error) {
         if (error.response && error.response.status === 401) {
           navigate("/api/login");
@@ -76,45 +82,113 @@ const Dashboard = ({ token }) => {
     {
       title: "Action",
       dataIndex: "action",
-      render: () => (
+      render: (text, record) => (
         <Space>
-          <EditTwoTone />
-          <DeleteTwoTone />
+          <EditTwoTone onClick={() => editmode(record)} />
+          <DeleteTwoTone onClick={() => handleDelete(record.key)} />
         </Space>
       ),
     },
   ];
 
-  const showModal = () => {
+  const editmode = (record) => {
+    setIsEditing(true);
+    // setEditingUser(record.key);
+    setUser({
+      key:record.key,
+      firstName: record.firstName,
+      lastName: record.lastName,
+      email: record.email,
+      phoneNumber: record.phoneNumber,
+      socialHandler: record.socialHandler,
+    });
     setIsModalOpen(true);
   };
 
-  const handleOk = async () => {
-    try {
-      const newUser = { ...user, key: uuidv4() };
-      await axios.post("http://localhost:5000/api/dashboard", newUser, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setDataSource((prevDataSource) => [...prevDataSource, newUser]);
-      setIsModalOpen(false);
-      setUser({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phoneNumber: "",
-        socialHandler: "",
-      });
-    } catch (error) {
-      console.error("Error creating user:", error);
-    }
+  const showModal = () => {
+    setIsModalOpen(true);
+    setIsEditing(false);
+    setUser({
+      key:"",
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      socialHandler: "",
+    });
   };
+
+  const handleOk = async () => {
+    if (isEditing) {
+      try {
+        await axios.put(
+          `http://localhost:5000/api/dashboard/${user.key}`,
+          user,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log("User updated successfully:", user.key);
+        setDataSource((prevDataSource) =>
+          prevDataSource.map((item) =>
+            item.key === user.key ? { ...item, ...user } : item
+          )
+        );
+      } catch (error) {
+        console.error("Error updating user:", error);
+      }
+    } else {
+      try {
+        const newUser = { ...user, key: uuidv4() };
+        const response = await axios.post(
+          "http://localhost:5000/api/dashboard",
+          user,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        newUser.key = response.data.user._id; // Ensure the key is set to the ID from the backend
+        setDataSource((prevDataSource) => [...prevDataSource, newUser]);
+      } catch (error) {
+        console.error("Error creating user:", error);
+      }
+    }
+    setIsModalOpen(false);
+    setUser({
+      key: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      socialHandler: "",
+    });
+  };
+
 
   const handleCancel = () => {
     setIsModalOpen(false);
   };
 
+  const handleDelete = async (userId) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/dashboard/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("Delete:", userId);
+      console.log("token Delete:", token);
+      setDataSource((prevDataSource) =>
+        prevDataSource.filter((item) => item.key !== userId)
+      );
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUser((prevState) => ({
@@ -151,7 +225,7 @@ const Dashboard = ({ token }) => {
             <Table dataSource={dataSource} columns={columns} />
           </article>
           <Modal
-            title="Add User"
+            title={isEditing ? "Customise User" : "Add User"}
             open={isModalOpen}
             onOk={handleOk}
             onCancel={handleCancel}
