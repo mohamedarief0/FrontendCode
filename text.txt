@@ -1,0 +1,3 @@
+
+create an sass in the src 
+sass --watch .\src\scss\main.scss:.\src\css\main.css

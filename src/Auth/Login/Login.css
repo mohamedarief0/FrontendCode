@@ -1,0 +1,37 @@
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.form-contain {
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  color: #383838;
+  /* border: 1px solid #ccc; */
+  /* border-radius: 10px; */
+  /* background-color: #fff; */
+}
+
+
+input.form-control {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 4px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Change the border color on hover */
+input.form-control:hover {
+  border-color: #02B9F5;
+}
+
+/* Change the border color and add a box-shadow on focus */
+input.form-control:focus {
+  border-color: dodgerblue;
+  box-shadow: 0 0 5px dodgerblue;
+  outline: none;
+}

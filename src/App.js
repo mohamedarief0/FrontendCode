@@ -1,24 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import Registration from "./Auth/Registration";
+import Login from "./Auth/Login";
+import Dashboard from "./Dashboard/Dashboard";
+import MainDashboard from "./MainDashboard/MainDashboard";
+// import "../node_modules/bootstrap/dist/css/bootstrap.css";
+// import "../scss/custom.scss";
+import "./css/main.css"
 
 function App() {
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
+  
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Routes>
+        {/* <Route path="/" element={<MainDashboard />} /> */}
+        <Route path="/api/register" element={<Registration />} />
+        <Route path="/api/login" element={<Login setToken={setToken} />} />
+        <Route path="/api/dashboard" element={<Dashboard token={token} />} />
+      </Routes>
+    </>
   );
 }
 
