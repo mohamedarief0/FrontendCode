@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -7,8 +8,12 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
-import Logo from "../Asset/logojpg.jpg";
-import { useNavigate } from "react-router-dom";
+
+import Dashboard from "../Dashboard/Dashboard";
+import NavBar from "../NavBar/index";
+import Logo from "../Asset/logo.jpg"
+import "./MainDashboard.css";
+
 const { Header, Sider, Content } = Layout;
 function MainDashboard() {
   const [collapsed, setCollapsed] = useState(false);
@@ -16,42 +21,35 @@ function MainDashboard() {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-
   const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/api/login");
   };
+
   return (
     <>
-      <Layout>
+      <Layout
+        style={{
+          minHeight: "100vh",
+        }}
+      >
+        {/* <NavBar /> */}
         <Sider
-          trigger={null}
+          style={{
+            background: colorBgContainer,
+          }}
           collapsible
           collapsed={collapsed}
-          style={{
-            // paddingTop:"78px",
-            background: colorBgContainer,
-            height: "100vh",
-          }}
+          onCollapse={(value) => setCollapsed(value)}
         >
-          <div className="demo-logo-vertical">
-            {/* <img
-              // src={Logo}
-              width="150px"
-              className="m-2 rounded demo-logo-vertical"
-              style={{ objectFit: "cover" }}
-              height="50px"
-              alt="logo"
-            /> */}
-          </div>
+          <div className="demo-logo-vertical" />
           <Menu
             theme="light"
             style={{
-              // paddingTop:"78px",
+              paddingTop: "70px",
+              zIndex: 10,
               // background: colorBgContainer,
-              // height: "100vh",
-              marginTop:"60px"
             }}
             mode="inline"
             defaultSelectedKeys={["1"]}
@@ -81,30 +79,16 @@ function MainDashboard() {
             style={{
               padding: 0,
               background: colorBgContainer,
-              // height:"100vh"
             }}
           >
-            <Button
-              type="text"
-              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-              onClick={() => setCollapsed(!collapsed)}
-              style={{
-                fontSize: "16px",
-                width: 64,
-                height: 64,
-              }}
-            />
+            <NavBar />
           </Header>
           <Content
             style={{
-              margin: "24px 16px",
-              padding: 24,
-              minHeight: 280,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
+              margin: "0 16px",
             }}
           >
-            Content
+            <Dashboard />
           </Content>
         </Layout>
       </Layout>

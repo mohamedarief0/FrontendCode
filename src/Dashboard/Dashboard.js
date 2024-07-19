@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import NavBar from "../NavBar";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css"; // Make sure to create and import a CSS file for styling
 import { Button, Modal, Space, Table } from "antd";
-import { EditTwoTone, DeleteTwoTone } from "@ant-design/icons";
+import { EditTwoTone, DeleteTwoTone, PlusOutlined } from "@ant-design/icons";
 import { v4 as uuidv4 } from "uuid";
 
 const Dashboard = ({ token }) => {
   const [message, setMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  // const [editingUser, setEditingUser] = useState(null);
   const [user, setUser] = useState({
-    key:"",
+    key: "",
     firstName: "",
     lastName: "",
     email: "",
@@ -93,9 +91,8 @@ const Dashboard = ({ token }) => {
 
   const editmode = (record) => {
     setIsEditing(true);
-    // setEditingUser(record.key);
     setUser({
-      key:record.key,
+      key: record.key,
       firstName: record.firstName,
       lastName: record.lastName,
       email: record.email,
@@ -109,7 +106,7 @@ const Dashboard = ({ token }) => {
     setIsModalOpen(true);
     setIsEditing(false);
     setUser({
-      key:"",
+      key: "",
       firstName: "",
       lastName: "",
       email: "",
@@ -168,7 +165,6 @@ const Dashboard = ({ token }) => {
     });
   };
 
-
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -199,22 +195,14 @@ const Dashboard = ({ token }) => {
 
   return (
     <>
-      <NavBar />
       <div className="dashboard-container">
-        <aside className="sidebar">
-          <ul>
-            <li>Dashboard</li>
-            <li>Home</li>
-            <li>About</li>
-            <li>Contact</li>
-          </ul>
-        </aside>
         <main className="content">
-          <div className="d-flex justify-content-between">
+          <div className="d-flex justify-content-between align-items-center">
             <h2>Dashboard</h2>
             <Button
               type="primary"
-              style={{ backgroundColor: "primary" }}
+              icon={<PlusOutlined />}
+              // style={{ backgroundColor: "black", color:"white" }}
               onClick={showModal}
             >
               Add user

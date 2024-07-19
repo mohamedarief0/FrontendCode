@@ -18,7 +18,7 @@ function App() {
         {/* <Route path="/" element={<MainDashboard />} /> */}
         <Route path="/api/register" element={<Registration />} />
         <Route path="/api/login" element={<Login setToken={setToken} />} />
-        <Route path="/api/dashboard" element={<Dashboard token={token} />} />
+        <Route path="/api/dashboard" element={<MainDashboard  token={token} />} />
       </Routes>
     </>
   );

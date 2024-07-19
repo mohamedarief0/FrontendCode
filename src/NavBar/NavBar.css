@@ -1,0 +1,12 @@
+.user-profile{
+    width: 50px;
+    border-radius: 100%;
+}
+
+.nav-bar-margin{
+    margin: 0 20px;
+}
+/* For Profile pic and role  */
+.profile-details {
+  line-height: 8px !important;
+}
