@@ -1,30 +1,59 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  FolderOutlined,
+  FileAddOutlined,
   UploadOutlined,
   UserOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import { Button, Layout, Menu, theme } from "antd";
-
-import Dashboard from "../Dashboard/Dashboard";
-import NavBar from "../NavBar/index";
-import Logo from "../Asset/logo.jpg"
+import { Layout, Menu, theme } from "antd";
 import "./MainDashboard.css";
+// importing components
+import Logo from "../Asset/logo.jpg";
+import NavBar from "../NavBar/index";
+import Dashboard from "../Dashboard/Dashboard";
+import Task from "../Task/Task";
+// import File from "../File/File"; // Assuming you have a File component
 
 const { Header, Sider, Content } = Layout;
+
 function MainDashboard() {
+  const { id } = useParams();
   const [collapsed, setCollapsed] = useState(false);
+  const [selectedMenuItem, setSelectedMenuItem] = useState(id || "dashboard"); // Use descriptive names and initialize with id if available
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { colorBgContainer },
   } = theme.useToken();
 
   const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/api/login");
+  };
+
+  const handleMenuClick = (e) => {
+    setSelectedMenuItem(e.key);
+    navigate(`/api/${e.key}`);
+  };
+
+  useEffect(() => {
+    setSelectedMenuItem(id || "dashboard");
+  }, [id]);
+
+  const renderContent = () => {
+    switch (id) {
+      case "dashboard":
+        return <Dashboard />;
+      case "task":
+        return <Task />;
+      case "file":
+        // return <File />;
+      default:
+        return <Dashboard />;
+    }
   };
 
   return (
@@ -34,7 +63,6 @@ function MainDashboard() {
           minHeight: "100vh",
         }}
       >
-        {/* <NavBar /> */}
         <Sider
           style={{
             background: colorBgContainer,
@@ -49,22 +77,23 @@ function MainDashboard() {
             style={{
               paddingTop: "70px",
               zIndex: 10,
-              // background: colorBgContainer,
             }}
             mode="inline"
-            defaultSelectedKeys={["1"]}
+            defaultSelectedKeys={["dashboard"]}
+            selectedKeys={[selectedMenuItem]}
+            onClick={handleMenuClick} // Handle menu click
           >
-            <Menu.Item key="1" icon={<UserOutlined />}>
+            <Menu.Item key="dashboard" icon={<UserOutlined />}>
               Dashboard
             </Menu.Item>
-            <Menu.Item key="2" icon={<UserOutlined />}>
-              Team
+            <Menu.Item key="task" icon={<FileAddOutlined />}>
+              Task
             </Menu.Item>
-            <Menu.Item key="3" icon={<UploadOutlined />}>
+            <Menu.Item key="file" icon={<FolderOutlined />}>
               File
             </Menu.Item>
             <Menu.Item
-              key="4"
+              key="logout"
               danger
               className="mt-5"
               onClick={handleLogout}
@@ -88,7 +117,7 @@ function MainDashboard() {
               margin: "0 16px",
             }}
           >
-            <Dashboard />
+            {renderContent()}
           </Content>
         </Layout>
       </Layout>
