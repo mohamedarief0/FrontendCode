@@ -21,12 +21,18 @@ input.form-control {
 }
 
 /* Change the border color on hover */
-input.form-control:hover {
+input.form-control,textarea:hover {
   border-color: #02B9F5;
 }
 
 /* Change the border color and add a box-shadow on focus */
 input.form-control:focus {
+  border-color: dodgerblue;
+  box-shadow: 0 0 5px dodgerblue;
+  outline: none;
+}
+
+textarea:focus {
   border-color: dodgerblue;
   box-shadow: 0 0 5px dodgerblue;
   outline: none;
